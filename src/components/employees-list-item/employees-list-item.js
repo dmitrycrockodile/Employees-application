@@ -5,14 +5,14 @@ export default class EmployeesListItem extends Component {
    constructor(props) {
       super(props);
       this.state = {
-         increase: false,
+         demobilization: false,
          major: false,
       }
    }
 
-   onIncrease = () => {
-      this.setState(({increase}) => ({
-         increase: !increase
+   onDembel = () => {
+      this.setState(({demobilization}) => ({
+         demobilization: !demobilization
       }))
    } 
 
@@ -23,10 +23,10 @@ export default class EmployeesListItem extends Component {
    }
 
    render() {
-      const {name, salary} = this.props;
-      const {increase, major} = this.state;
+      const {name, salary, onDelete} = this.props;
+      const {demobilization, major} = this.state;
       let classNames = "list-group-item d-flex justify-content-between";
-      if (increase) {
+      if (demobilization) {
          classNames += " increase";
       } 
       if (major) {
@@ -43,12 +43,13 @@ export default class EmployeesListItem extends Component {
             <div className="d-flex justify-content-center align-items-center">
                <button type="button"
                   className="btn-cookie btn-sm"
-                  onClick={this.onIncrease}>
+                  onClick={this.onDembel}>
                      <i className="fas fa-cookie"></i>
                </button>
    
                <button type="button"
-                  className="btn-trash btn-sm">
+                  className="btn-trash btn-sm"
+                  onClick={onDelete}>
                      <i className="fas fa-trash"></i>
                </button>
    

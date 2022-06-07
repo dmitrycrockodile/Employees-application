@@ -13,21 +13,22 @@ export default class App extends Component {
       super(props);
       this.state = {
          data: [
-            this.createItem("Andrew B.", "12", false, 1),
-            this.createItem("Veniamin L.", "1300", true, 2),
-            this.createItem("Alex M.", "2350", false, 3),
-         ]
+            this.createItem("Andrew B.", "12", false, true, 1),
+            this.createItem("Veniamin L.", "1300", true, false, 2),
+            this.createItem("Alex M.", "2350", false, false, 3),
+         ],
+         term: '',
       }
       this.maxId = 4;
    }
 
-   createItem = (name, salary, increase, id) => {
-      return {name, salary, increase, id};
+   createItem = (name, salary, demobilizated, major, id) => {
+      return {name, salary, demobilizated, major, id};
    }
 
    addItem = (name, salary) => {
       this.setState(({data}) => {
-         const newItem = this.createItem(name, salary, false, this.maxId++);
+         const newItem = this.createItem(name, salary, false, false, this.maxId++);
          return {
             data: data.concat(newItem)
          }
@@ -40,19 +41,37 @@ export default class App extends Component {
       }));
    }
 
+   onToggleProp = (id, prop) => {
+      this.setState(({data}) => ({
+         data: data.map(item => {
+            if (item.id === id) {
+               return {...item, [prop]: !item[prop]};
+            }
+            return item;
+         })
+      }))
+   }
+
+   
+
    render() {
-      const {data} = this.state;
+      const {data, term} = this.state;
+
+      const employees = data.length;
+      const majors = data.filter(item => item.major).length;
 
       return (
          <div className="app">
-            <AppInfo/>
+            <AppInfo employees={employees} majors={majors}/>
    
             <div className="search-panel">
                <SearchPanel/>
                <AppFilter/>
             </div>
    
-            <EmployeesList data={data} onDelete={this.deleteItem}/>
+            <EmployeesList data={data} 
+                           onDelete={this.deleteItem}
+                           onToggleProp={this.onToggleProp}/>
             <EmployeesAddForm onAdd={this.addItem}/>
          </div>
       )

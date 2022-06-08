@@ -18,6 +18,7 @@ export default class App extends Component {
             this.createItem("Alex M.", "2350", false, false, 3),
          ],
          term: '',
+         filter: 'all',
       }
       this.maxId = 4;
    }
@@ -52,24 +53,55 @@ export default class App extends Component {
       }))
    }
 
-   
+   searchEmp = (items, term) => {
+      if (term.length === 0) {
+         return items;
+      }
+
+      return items.filter(item => {
+         return item.name.toLowerCase().indexOf(term) > -1;
+      });
+   }
+
+   onUpdateSearch = (term) => {
+      this.setState({term});
+   }
+
+   filterItems = (items) => {
+      switch (this.state.filter) {
+         case 'all':
+            return items;
+         case 'major':
+            return items.filter(item => item.major);
+         case 'rich':
+            return items.filter(item => item.salary > 1000);
+         default: 
+            return items;
+      }
+   }
+
+   onFilterChange = (filter) => {
+      this.setState({filter});
+   }
 
    render() {
-      const {data, term} = this.state;
+      const {data, term, filter} = this.state;
 
       const employees = data.length;
       const majors = data.filter(item => item.major).length;
+
+      const visibleData = this.filterItems(this.searchEmp(data, term), filter);
 
       return (
          <div className="app">
             <AppInfo employees={employees} majors={majors}/>
    
             <div className="search-panel">
-               <SearchPanel/>
-               <AppFilter/>
+               <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
+               <AppFilter onFilterChange={this.onFilterChange} filter={filter}/>
             </div>
    
-            <EmployeesList data={data} 
+            <EmployeesList data={visibleData} 
                            onDelete={this.deleteItem}
                            onToggleProp={this.onToggleProp}/>
             <EmployeesAddForm onAdd={this.addItem}/>
